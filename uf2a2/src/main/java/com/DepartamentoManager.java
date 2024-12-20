@@ -93,4 +93,67 @@ public class DepartamentoManager {
             System.err.println("Error al eliminar departamento: " + e.getMessage());
         }
     }
+
+    public static void mostrarPorId(int id) {
+        String query = "SELECT * FROM departamentos WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+             
+             stmt.setInt(1, id);
+             ResultSet rs = stmt.executeQuery();
+             
+             if (rs.next()) {
+                 System.out.println("ID: " + rs.getInt("id"));
+                 System.out.println("Nombre: " + rs.getString("nombre_departamento"));
+             } else {
+                 System.out.println("Departamento no encontrado.");
+             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void mostrarPorNombre(String nombre) {
+        String query = "SELECT * FROM departamentos WHERE nombre_departamento LIKE ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+             
+             stmt.setString(1, "%" + nombre + "%");  // El % permite coincidencias parciales
+             ResultSet rs = stmt.executeQuery();
+             
+             while (rs.next()) {
+                 System.out.println("ID: " + rs.getInt("id"));
+                 System.out.println("Nombre: " + rs.getString("nombre_departamento"));
+             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void actualizarDepartamento(int id, String nuevoNombre) {
+        String query = "UPDATE departamentos SET nombre_departamento = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+             
+             stmt.setString(1, nuevoNombre);
+             stmt.setInt(2, id);
+             stmt.executeUpdate();
+             System.out.println("Departamento actualizado correctamente.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void eliminarDepartamento(int id) {
+        String query = "DELETE FROM departamentos WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+             
+             stmt.setInt(1, id);
+             stmt.executeUpdate();
+             System.out.println("Departamento eliminado correctamente.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
